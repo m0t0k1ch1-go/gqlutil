@@ -17,14 +17,14 @@ func (gi Int64) String() string {
 
 // MarshalGQL implements the github.com/99designs/gqlgen/graphql.Marshaler interface.
 func (gi Int64) MarshalGQL(w io.Writer) {
-	w.Write([]byte(strconv.Quote(gi.string())))
+	io.WriteString(w, strconv.Quote(gi.string()))
 }
 
 // UnmarshalGQL implements the github.com/99designs/gqlgen/graphql.Unmarshaler interface.
 func (gi *Int64) UnmarshalGQL(v any) error {
 	s, ok := v.(string)
 	if !ok {
-		return oops.Errorf("Int64 must be a string")
+		return oops.Errorf("must be a string")
 	}
 
 	i, err := strconv.ParseInt(s, 10, 64)
