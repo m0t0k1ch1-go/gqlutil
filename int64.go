@@ -10,6 +10,11 @@ import (
 // Int64 is a custom scalar for int64.
 type Int64 int64
 
+// Unwrap returns the int64.
+func (gi Int64) Unwrap() int64 {
+	return int64(gi)
+}
+
 // String implements the fmt.Stringer interface.
 func (gi Int64) String() string {
 	return gi.string()

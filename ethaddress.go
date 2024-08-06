@@ -8,8 +8,13 @@ import (
 	"github.com/samber/oops"
 )
 
-// EthAddress is a custom scalar for ethcommon.Address.
+// EthAddress is a custom scalar for github.com/ethereum/go-ethereum/common.Address.
 type EthAddress ethcommon.Address
+
+// Unwrap returns the github.com/ethereum/go-ethereum/common.Address.
+func (gea EthAddress) Unwrap() ethcommon.Address {
+	return ethcommon.Address(gea)
+}
 
 // String implements the fmt.Stringer interface.
 func (gea EthAddress) String() string {
