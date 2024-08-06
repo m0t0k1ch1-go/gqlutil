@@ -10,6 +10,11 @@ import (
 // Int64 is a custom scalar for int64.
 type Int64 int64
 
+// Unwrap returns the int64.
+func (gi Int64) Unwrap() int64 {
+	return int64(gi)
+}
+
 // String implements the fmt.Stringer interface.
 func (gi Int64) String() string {
 	return gi.string()
@@ -17,14 +22,14 @@ func (gi Int64) String() string {
 
 // MarshalGQL implements the github.com/99designs/gqlgen/graphql.Marshaler interface.
 func (gi Int64) MarshalGQL(w io.Writer) {
-	w.Write([]byte(strconv.Quote(gi.string())))
+	io.WriteString(w, strconv.Quote(gi.string()))
 }
 
 // UnmarshalGQL implements the github.com/99designs/gqlgen/graphql.Unmarshaler interface.
 func (gi *Int64) UnmarshalGQL(v any) error {
 	s, ok := v.(string)
 	if !ok {
-		return oops.Errorf("Int64 must be a string")
+		return oops.Errorf("must be a string")
 	}
 
 	i, err := strconv.ParseInt(s, 10, 64)
