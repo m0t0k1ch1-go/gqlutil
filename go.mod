@@ -5,6 +5,7 @@ go 1.22
 require (
 	github.com/ethereum/go-ethereum v1.14.8
 	github.com/google/go-cmp v0.6.0
+	github.com/m0t0k1ch1-go/bigutil/v2 v2.9.0
 	github.com/samber/oops v1.13.1
 )
 
