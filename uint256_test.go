@@ -6,9 +6,9 @@ import (
 
 	ethmath "github.com/ethereum/go-ethereum/common/math"
 	"github.com/m0t0k1ch1-go/bigutil/v2"
+	"github.com/stretchr/testify/require"
 
 	"github.com/m0t0k1ch1-go/gqlutil"
-	"github.com/m0t0k1ch1-go/gqlutil/internal/testutil"
 )
 
 func TestUint256MarshalGQL(t *testing.T) {
@@ -32,11 +32,10 @@ func TestUint256MarshalGQL(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				buf := &bytes.Buffer{}
-
+				var buf = &bytes.Buffer{}
 				tc.in.MarshalGQL(buf)
 
-				testutil.Equal(t, tc.out, buf.Bytes())
+				require.Equal(t, tc.out, buf.Bytes())
 			})
 		}
 	})
@@ -63,13 +62,10 @@ func TestUint256UnmarshalGQL(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				var gx gqlutil.Uint256
+				var g gqlutil.Uint256
+				require.Nil(t, g.UnmarshalGQL(tc.in))
 
-				if err := gx.UnmarshalGQL(tc.in); err != nil {
-					t.Fatal(err)
-				}
-
-				testutil.Equal(t, gx.Unwrap().BigInt().Cmp(tc.out.Unwrap().BigInt()), 0)
+				require.Zero(t, g.Unwrap().BigInt().Cmp(tc.out.Unwrap().BigInt()))
 			})
 		}
 	})

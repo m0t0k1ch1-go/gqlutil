@@ -5,8 +5,9 @@ import (
 	"math"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/m0t0k1ch1-go/gqlutil"
-	"github.com/m0t0k1ch1-go/gqlutil/internal/testutil"
 )
 
 func TestInt64MarshalGQL(t *testing.T) {
@@ -35,11 +36,10 @@ func TestInt64MarshalGQL(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				buf := &bytes.Buffer{}
-
+				var buf = &bytes.Buffer{}
 				tc.in.MarshalGQL(buf)
 
-				testutil.Equal(t, tc.out, buf.Bytes())
+				require.Equal(t, tc.out, buf.Bytes())
 			})
 		}
 	})
@@ -71,13 +71,10 @@ func TestInt64UnmarshalGQL(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				var gi gqlutil.Int64
+				var g gqlutil.Int64
+				require.Nil(t, g.UnmarshalGQL(tc.in))
 
-				if err := gi.UnmarshalGQL(tc.in); err != nil {
-					t.Fatal(err)
-				}
-
-				testutil.Equal(t, tc.out, gi)
+				require.Equal(t, tc.out, g)
 			})
 		}
 	})

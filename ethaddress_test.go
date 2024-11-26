@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	ethcommon "github.com/ethereum/go-ethereum/common"
+	"github.com/stretchr/testify/require"
 
 	"github.com/m0t0k1ch1-go/gqlutil"
-	"github.com/m0t0k1ch1-go/gqlutil/internal/testutil"
 )
 
 func TestEthAddressMarshalGQL(t *testing.T) {
@@ -26,11 +26,10 @@ func TestEthAddressMarshalGQL(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				buf := &bytes.Buffer{}
-
+				var buf = &bytes.Buffer{}
 				tc.in.MarshalGQL(buf)
 
-				testutil.Equal(t, tc.out, buf.Bytes())
+				require.Equal(t, tc.out, buf.Bytes())
 			})
 		}
 	})
@@ -52,13 +51,10 @@ func TestEthAddressUnmarshalGQL(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				var gea gqlutil.EthAddress
+				var g gqlutil.EthAddress
+				require.Nil(t, g.UnmarshalGQL(tc.in))
 
-				if err := gea.UnmarshalGQL(tc.in); err != nil {
-					t.Fatal(err)
-				}
-
-				testutil.Equal(t, tc.out, gea)
+				require.Equal(t, tc.out, g)
 			})
 		}
 	})
