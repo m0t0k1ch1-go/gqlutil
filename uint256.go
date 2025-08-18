@@ -4,7 +4,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/m0t0k1ch1-go/bigutil/v2"
+	"github.com/m0t0k1ch1-go/bigutil/v3"
 	"github.com/samber/oops"
 )
 
@@ -33,7 +33,7 @@ func (gx *Uint256) UnmarshalGQL(v any) error {
 		return oops.Errorf("must be a string")
 	}
 
-	x, err := bigutil.HexToUint256(s)
+	x, err := bigutil.NewUint256FromHex(s)
 	if err != nil {
 		return err
 	}
