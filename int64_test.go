@@ -71,7 +71,7 @@ func TestInt64UnmarshalGQL(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		tcs := []struct {
 			name string
-			in   string
+			in   any
 			out  gqlutil.Int64
 		}{
 			{

@@ -67,7 +67,7 @@ func TestUint256UnmarshalGQL(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		tcs := []struct {
 			name string
-			in   string
+			in   any
 			out  gqlutil.Uint256
 		}{
 			{
