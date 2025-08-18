@@ -18,7 +18,7 @@ func TestUint64MarshalGQL(t *testing.T) {
 			out  []byte
 		}{
 			{
-				"min",
+				"zero",
 				gqlutil.Uint64(0),
 				[]byte(`"0"`),
 			},
@@ -31,8 +31,8 @@ func TestUint64MarshalGQL(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				var buf = &bytes.Buffer{}
-				tc.in.MarshalGQL(buf)
+				var buf bytes.Buffer
+				tc.in.MarshalGQL(&buf)
 
 				require.Equal(t, tc.out, buf.Bytes())
 			})
@@ -41,6 +41,28 @@ func TestUint64MarshalGQL(t *testing.T) {
 }
 
 func TestUint64UnmarshalGQL(t *testing.T) {
+	t.Run("failure", func(t *testing.T) {
+		tcs := []struct {
+			name string
+			in   any
+		}{
+			{
+				"int",
+				0,
+			},
+		}
+
+		for _, tc := range tcs {
+			t.Run(tc.name, func(t *testing.T) {
+				var g gqlutil.Uint64
+				{
+					err := g.UnmarshalGQL(tc.in)
+					require.Error(t, err)
+				}
+			})
+		}
+	})
+
 	t.Run("success", func(t *testing.T) {
 		tcs := []struct {
 			name string
@@ -48,7 +70,7 @@ func TestUint64UnmarshalGQL(t *testing.T) {
 			out  gqlutil.Uint64
 		}{
 			{
-				"min",
+				"zero",
 				"0",
 				gqlutil.Uint64(0),
 			},
@@ -62,7 +84,10 @@ func TestUint64UnmarshalGQL(t *testing.T) {
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
 				var g gqlutil.Uint64
-				require.Nil(t, g.UnmarshalGQL(tc.in))
+				{
+					err := g.UnmarshalGQL(tc.in)
+					require.NoError(t, err)
+				}
 
 				require.Equal(t, tc.out, g)
 			})
