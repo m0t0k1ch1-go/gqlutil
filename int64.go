@@ -11,37 +11,37 @@ import (
 type Int64 int64
 
 // Unwrap returns the int64.
-func (gi Int64) Unwrap() int64 {
-	return int64(gi)
+func (g Int64) Unwrap() int64 {
+	return int64(g)
 }
 
 // String implements the fmt.Stringer interface.
-func (gi Int64) String() string {
-	return gi.string()
+func (g Int64) String() string {
+	return g.string()
 }
 
 // MarshalGQL implements the github.com/99designs/gqlgen/graphql.Marshaler interface.
-func (gi Int64) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(gi.string()))
+func (g Int64) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(g.string()))
 }
 
 // UnmarshalGQL implements the github.com/99designs/gqlgen/graphql.Unmarshaler interface.
-func (gi *Int64) UnmarshalGQL(v any) error {
+func (g *Int64) UnmarshalGQL(v any) error {
 	s, ok := v.(string)
 	if !ok {
-		return oops.Errorf("must be a string")
+		return oops.New("v must be string")
 	}
 
 	i, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
-		return err
+		return oops.Wrap(err)
 	}
 
-	*gi = Int64(i)
+	*g = Int64(i)
 
 	return nil
 }
 
-func (gi Int64) string() string {
-	return strconv.FormatInt(int64(gi), 10)
+func (g Int64) string() string {
+	return strconv.FormatInt(int64(g), 10)
 }
