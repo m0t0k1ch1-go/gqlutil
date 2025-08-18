@@ -1,3 +1,8 @@
+.PHONY: lint
+lint:
+	go vet ./...
+	go tool staticcheck ./...
+
 .PHONY: test
-test:
+test: lint
 	go test -v ./...
