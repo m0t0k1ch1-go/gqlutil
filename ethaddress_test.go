@@ -26,8 +26,8 @@ func TestEthAddressMarshalGQL(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				var buf = &bytes.Buffer{}
-				tc.in.MarshalGQL(buf)
+				var buf bytes.Buffer
+				tc.in.MarshalGQL(&buf)
 
 				require.Equal(t, tc.out, buf.Bytes())
 			})
@@ -36,6 +36,28 @@ func TestEthAddressMarshalGQL(t *testing.T) {
 }
 
 func TestEthAddressUnmarshalGQL(t *testing.T) {
+	t.Run("failure", func(t *testing.T) {
+		tcs := []struct {
+			name string
+			in   string
+		}{
+			{
+				"invalid",
+				"invalid",
+			},
+		}
+
+		for _, tc := range tcs {
+			t.Run(tc.name, func(t *testing.T) {
+				var g gqlutil.EthAddress
+				{
+					err := g.UnmarshalGQL(tc.in)
+					require.Error(t, err)
+				}
+			})
+		}
+	})
+
 	t.Run("success", func(t *testing.T) {
 		tcs := []struct {
 			name string
@@ -52,7 +74,10 @@ func TestEthAddressUnmarshalGQL(t *testing.T) {
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
 				var g gqlutil.EthAddress
-				require.Nil(t, g.UnmarshalGQL(tc.in))
+				{
+					err := g.UnmarshalGQL(tc.in)
+					require.NoError(t, err)
+				}
 
 				require.Equal(t, tc.out, g)
 			})
