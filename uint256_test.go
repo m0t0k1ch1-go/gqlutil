@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	ethmath "github.com/ethereum/go-ethereum/common/math"
-	"github.com/m0t0k1ch1-go/bigutil/v2"
+	"github.com/m0t0k1ch1-go/bigutil/v3"
 	"github.com/stretchr/testify/require"
 
 	"github.com/m0t0k1ch1-go/gqlutil"
@@ -20,12 +20,12 @@ func TestUint256MarshalGQL(t *testing.T) {
 		}{
 			{
 				"min",
-				gqlutil.Uint256(bigutil.MustHexToUint256("0x0")),
+				gqlutil.Uint256(bigutil.MustNewUint256FromHex("0x0")),
 				[]byte(`"0x0"`),
 			},
 			{
 				"max",
-				gqlutil.Uint256(bigutil.MustBigIntToUint256(ethmath.MaxBig256)),
+				gqlutil.Uint256(bigutil.MustNewUint256(ethmath.MaxBig256)),
 				[]byte(`"0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"`),
 			},
 		}
@@ -51,12 +51,12 @@ func TestUint256UnmarshalGQL(t *testing.T) {
 			{
 				"min",
 				"0x0",
-				gqlutil.Uint256(bigutil.MustHexToUint256("0x0")),
+				gqlutil.Uint256(bigutil.MustNewUint256FromHex("0x0")),
 			},
 			{
 				"max",
 				"0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-				gqlutil.Uint256(bigutil.MustBigIntToUint256(ethmath.MaxBig256)),
+				gqlutil.Uint256(bigutil.MustNewUint256(ethmath.MaxBig256)),
 			},
 		}
 
