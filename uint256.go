@@ -12,37 +12,37 @@ import (
 type Uint256 bigutil.Uint256
 
 // Unwrap returns the bigutil.Uint256.
-func (gx Uint256) Unwrap() bigutil.Uint256 {
-	return bigutil.Uint256(gx)
+func (g Uint256) Unwrap() bigutil.Uint256 {
+	return bigutil.Uint256(g)
 }
 
 // String implements the fmt.Stringer interface.
-func (gx Uint256) String() string {
-	return gx.string()
+func (g Uint256) String() string {
+	return g.string()
 }
 
 // MarshalGQL implements the github.com/99designs/gqlgen/graphql.Marshaler interface.
-func (gx Uint256) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(gx.string()))
+func (g Uint256) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(g.string()))
 }
 
 // UnmarshalGQL implements the github.com/99designs/gqlgen/graphql.Unmarshaler interface.
-func (gx *Uint256) UnmarshalGQL(v any) error {
+func (g *Uint256) UnmarshalGQL(v any) error {
 	s, ok := v.(string)
 	if !ok {
-		return oops.Errorf("must be a string")
+		return oops.New("v must be string")
 	}
 
-	x, err := bigutil.NewUint256FromHex(s)
+	x256, err := bigutil.NewUint256FromHex(s)
 	if err != nil {
-		return err
+		return oops.Wrap(err)
 	}
 
-	*gx = Uint256(x)
+	*g = Uint256(x256)
 
 	return nil
 }
 
-func (gx Uint256) string() string {
-	return bigutil.Uint256(gx).String()
+func (g Uint256) string() string {
+	return bigutil.Uint256(g).String()
 }

@@ -12,36 +12,35 @@ import (
 type EthAddress ethcommon.Address
 
 // Unwrap returns the github.com/ethereum/go-ethereum/common.Address.
-func (gea EthAddress) Unwrap() ethcommon.Address {
-	return ethcommon.Address(gea)
+func (g EthAddress) Unwrap() ethcommon.Address {
+	return ethcommon.Address(g)
 }
 
 // String implements the fmt.Stringer interface.
-func (gea EthAddress) String() string {
-	return gea.string()
+func (g EthAddress) String() string {
+	return g.string()
 }
 
 // MarshalGQL implements the github.com/99designs/gqlgen/graphql.Marshaler interface.
-func (gea EthAddress) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(gea.string()))
+func (g EthAddress) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(g.string()))
 }
 
 // UnmarshalGQL implements the github.com/99designs/gqlgen/graphql.Unmarshaler interface.
-func (gea *EthAddress) UnmarshalGQL(v any) error {
+func (g *EthAddress) UnmarshalGQL(v any) error {
 	s, ok := v.(string)
 	if !ok {
-		return oops.Errorf("must be a string")
+		return oops.New("v must be string")
 	}
-
 	if ok := ethcommon.IsHexAddress(s); !ok {
-		return oops.Errorf("invalid eth address")
+		return oops.New("v must be valid eth address")
 	}
 
-	*gea = EthAddress(ethcommon.HexToAddress(s))
+	*g = EthAddress(ethcommon.HexToAddress(s))
 
 	return nil
 }
 
-func (gea EthAddress) string() string {
-	return ethcommon.Address(gea).Hex()
+func (g EthAddress) string() string {
+	return ethcommon.Address(g).Hex()
 }
