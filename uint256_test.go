@@ -19,8 +19,8 @@ func TestUint256MarshalGQL(t *testing.T) {
 			out  []byte
 		}{
 			{
-				"min",
-				gqlutil.Uint256(bigutil.MustNewUint256FromHex("0x0")),
+				"zero",
+				gqlutil.Uint256(bigutil.NewUint256FromUint64(0)),
 				[]byte(`"0x0"`),
 			},
 			{
@@ -32,8 +32,8 @@ func TestUint256MarshalGQL(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				var buf = &bytes.Buffer{}
-				tc.in.MarshalGQL(buf)
+				var buf bytes.Buffer
+				tc.in.MarshalGQL(&buf)
 
 				require.Equal(t, tc.out, buf.Bytes())
 			})
@@ -42,6 +42,28 @@ func TestUint256MarshalGQL(t *testing.T) {
 }
 
 func TestUint256UnmarshalGQL(t *testing.T) {
+	t.Run("failure", func(t *testing.T) {
+		tcs := []struct {
+			name string
+			in   any
+		}{
+			{
+				"int",
+				0,
+			},
+		}
+
+		for _, tc := range tcs {
+			t.Run(tc.name, func(t *testing.T) {
+				var g gqlutil.Uint256
+				{
+					err := g.UnmarshalGQL(tc.in)
+					require.Error(t, err)
+				}
+			})
+		}
+	})
+
 	t.Run("success", func(t *testing.T) {
 		tcs := []struct {
 			name string
@@ -49,9 +71,9 @@ func TestUint256UnmarshalGQL(t *testing.T) {
 			out  gqlutil.Uint256
 		}{
 			{
-				"min",
+				"zero",
 				"0x0",
-				gqlutil.Uint256(bigutil.MustNewUint256FromHex("0x0")),
+				gqlutil.Uint256(bigutil.NewUint256FromUint64(0)),
 			},
 			{
 				"max",
@@ -63,7 +85,10 @@ func TestUint256UnmarshalGQL(t *testing.T) {
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
 				var g gqlutil.Uint256
-				require.Nil(t, g.UnmarshalGQL(tc.in))
+				{
+					err := g.UnmarshalGQL(tc.in)
+					require.NoError(t, err)
+				}
 
 				require.Zero(t, g.Unwrap().BigInt().Cmp(tc.out.Unwrap().BigInt()))
 			})
