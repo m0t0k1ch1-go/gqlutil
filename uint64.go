@@ -1,47 +1,36 @@
 package gqlutil
 
 import (
-	"io"
+	"errors"
+	"fmt"
 	"strconv"
 
-	"github.com/samber/oops"
+	"github.com/99designs/gqlgen/graphql"
 )
 
-// Uint64 is a custom scalar for uint64.
-type Uint64 uint64
-
-// Unwrap returns the uint64.
-func (g Uint64) Unwrap() uint64 {
-	return uint64(g)
+// MarshalUint64 returns a graphql.Marshaler that encodes a uint64 as a quoted decimal string.
+func MarshalUint64(i uint64) graphql.Marshaler {
+	return graphql.MarshalString(strconv.FormatUint(i, 10))
 }
 
-// String implements the fmt.Stringer interface.
-func (g Uint64) String() string {
-	return g.string()
-}
+// UnmarshalUint64 decodes a GraphQL String (non-negative decimal) into a uint64.
+func UnmarshalUint64(v any) (uint64, error) {
+	if v == nil {
+		return 0, errors.New("invalid graphql value: nil")
+	}
 
-// MarshalGQL implements the github.com/99designs/gqlgen/graphql.Marshaler interface.
-func (g Uint64) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(g.string()))
-}
-
-// UnmarshalGQL implements the github.com/99designs/gqlgen/graphql.Unmarshaler interface.
-func (g *Uint64) UnmarshalGQL(v any) error {
 	s, ok := v.(string)
 	if !ok {
-		return oops.New("v must be string")
+		return 0, fmt.Errorf("unsupported graphql value type: %T", v)
+	}
+	if len(s) == 0 {
+		return 0, errors.New("invalid graphql string: empty")
 	}
 
 	i, err := strconv.ParseUint(s, 10, 64)
 	if err != nil {
-		return oops.Wrap(err)
+		return 0, fmt.Errorf("invalid graphql string: %w", err)
 	}
 
-	*g = Uint64(i)
-
-	return nil
-}
-
-func (g Uint64) string() string {
-	return strconv.FormatUint(uint64(g), 10)
+	return i, nil
 }

@@ -10,50 +10,63 @@ import (
 	"github.com/m0t0k1ch1-go/gqlutil"
 )
 
-func TestEthAddressMarshalGQL(t *testing.T) {
+func TestMarshalEthAddress(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		tcs := []struct {
 			name string
-			in   gqlutil.EthAddress
-			out  []byte
+			in   ethcommon.Address
+			want string
 		}{
 			{
-				"valid",
-				gqlutil.EthAddress(ethcommon.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")),
-				[]byte(`"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"`),
+				"vitalik.eth",
+				ethcommon.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"),
+				`"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"`,
 			},
 		}
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
 				var buf bytes.Buffer
-				tc.in.MarshalGQL(&buf)
-
-				require.Equal(t, tc.out, buf.Bytes())
+				gqlutil.MarshalEthAddress(tc.in).MarshalGQL(&buf)
+				require.Equal(t, tc.want, buf.String())
 			})
 		}
 	})
 }
 
-func TestEthAddressUnmarshalGQL(t *testing.T) {
+func TestUnmarshalEthAddress(t *testing.T) {
 	t.Run("failure", func(t *testing.T) {
 		tcs := []struct {
 			name string
 			in   any
+			want string
 		}{
 			{
+				"nil",
+				nil,
+				"invalid graphql value: nil",
+			},
+			{
+				"int",
+				int(0),
+				"unsupported graphql value type: int",
+			},
+			{
+				"string: empty",
+				"",
+				"invalid graphql string: empty",
+			},
+			{
+				"string: invalid",
 				"invalid",
-				"invalid",
+				"invalid graphql string: invalid eth address",
 			},
 		}
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				var g gqlutil.EthAddress
-				{
-					err := g.UnmarshalGQL(tc.in)
-					require.Error(t, err)
-				}
+				_, err := gqlutil.UnmarshalEthAddress(tc.in)
+				require.ErrorContains(t, err, tc.want)
 			})
 		}
 	})
@@ -62,24 +75,20 @@ func TestEthAddressUnmarshalGQL(t *testing.T) {
 		tcs := []struct {
 			name string
 			in   any
-			out  gqlutil.EthAddress
+			want ethcommon.Address
 		}{
 			{
-				"valid",
+				"vitalik.eth",
 				"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-				gqlutil.EthAddress(ethcommon.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045")),
+				ethcommon.HexToAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"),
 			},
 		}
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				var g gqlutil.EthAddress
-				{
-					err := g.UnmarshalGQL(tc.in)
-					require.NoError(t, err)
-				}
-
-				require.Equal(t, tc.out, g)
+				address, err := gqlutil.UnmarshalEthAddress(tc.in)
+				require.NoError(t, err)
+				require.Equal(t, tc.want, address)
 			})
 		}
 	})
