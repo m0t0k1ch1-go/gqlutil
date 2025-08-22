@@ -10,55 +10,73 @@ import (
 	"github.com/m0t0k1ch1-go/gqlutil"
 )
 
-func TestUint64MarshalGQL(t *testing.T) {
+func TestMarshalUint64(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		tcs := []struct {
 			name string
-			in   gqlutil.Uint64
-			out  []byte
+			in   uint64
+			want string
 		}{
 			{
 				"zero",
-				gqlutil.Uint64(0),
-				[]byte(`"0"`),
+				0,
+				`"0"`,
+			},
+			{
+				"one",
+				1,
+				`"1"`,
 			},
 			{
 				"max",
-				gqlutil.Uint64(math.MaxUint64),
-				[]byte(`"18446744073709551615"`),
+				math.MaxUint64,
+				`"18446744073709551615"`,
 			},
 		}
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
 				var buf bytes.Buffer
-				tc.in.MarshalGQL(&buf)
-
-				require.Equal(t, tc.out, buf.Bytes())
+				gqlutil.MarshalUint64(tc.in).MarshalGQL(&buf)
+				require.Equal(t, tc.want, buf.String())
 			})
 		}
 	})
 }
 
-func TestUint64UnmarshalGQL(t *testing.T) {
+func TestUnmarshalUint64(t *testing.T) {
 	t.Run("failure", func(t *testing.T) {
 		tcs := []struct {
 			name string
 			in   any
+			want string
 		}{
 			{
+				"nil",
+				nil,
+				"invalid graphql value: nil",
+			},
+			{
 				"int",
-				0,
+				int(0),
+				"unsupported graphql value type: int",
+			},
+			{
+				"string: empty",
+				"",
+				"invalid graphql string: empty",
+			},
+			{
+				"string: invalid",
+				"invalid",
+				"invalid graphql string",
 			},
 		}
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				var g gqlutil.Uint64
-				{
-					err := g.UnmarshalGQL(tc.in)
-					require.Error(t, err)
-				}
+				_, err := gqlutil.UnmarshalUint64(tc.in)
+				require.ErrorContains(t, err, tc.want)
 			})
 		}
 	})
@@ -67,29 +85,30 @@ func TestUint64UnmarshalGQL(t *testing.T) {
 		tcs := []struct {
 			name string
 			in   any
-			out  gqlutil.Uint64
+			want uint64
 		}{
 			{
 				"zero",
 				"0",
-				gqlutil.Uint64(0),
+				0,
+			},
+			{
+				"one",
+				"1",
+				1,
 			},
 			{
 				"max",
 				"18446744073709551615",
-				gqlutil.Uint64(math.MaxUint64),
+				math.MaxUint64,
 			},
 		}
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				var g gqlutil.Uint64
-				{
-					err := g.UnmarshalGQL(tc.in)
-					require.NoError(t, err)
-				}
-
-				require.Equal(t, tc.out, g)
+				i, err := gqlutil.UnmarshalUint64(tc.in)
+				require.NoError(t, err)
+				require.Equal(t, tc.want, i)
 			})
 		}
 	})
