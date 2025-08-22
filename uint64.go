@@ -3,18 +3,17 @@ package gqlutil
 import (
 	"errors"
 	"fmt"
-	"io"
 	"strconv"
 
 	"github.com/99designs/gqlgen/graphql"
 )
 
+// MarshalUint64 returns a graphql.Marshaler that encodes a uint64 as a quoted decimal string.
 func MarshalUint64(i uint64) graphql.Marshaler {
-	return graphql.WriterFunc(func(w io.Writer) {
-		_, _ = io.WriteString(w, strconv.Quote(strconv.FormatUint(i, 10)))
-	})
+	return graphql.MarshalString(strconv.FormatUint(i, 10))
 }
 
+// UnmarshalUint64 decodes a GraphQL String (non-negative decimal) into a uint64.
 func UnmarshalUint64(v any) (uint64, error) {
 	if v == nil {
 		return 0, errors.New("invalid graphql value: nil")
