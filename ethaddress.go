@@ -1,46 +1,34 @@
 package gqlutil
 
 import (
-	"io"
-	"strconv"
+	"errors"
+	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	ethcommon "github.com/ethereum/go-ethereum/common"
-	"github.com/samber/oops"
 )
 
-// EthAddress is a custom scalar for github.com/ethereum/go-ethereum/common.Address.
-type EthAddress ethcommon.Address
-
-// Unwrap returns the github.com/ethereum/go-ethereum/common.Address.
-func (g EthAddress) Unwrap() ethcommon.Address {
-	return ethcommon.Address(g)
+// MarshalEthAddress returns a graphql.Marshaler that encodes an Ethereum address as a quoted checksummed hex string.
+func MarshalEthAddress(address ethcommon.Address) graphql.Marshaler {
+	return graphql.MarshalString(address.Hex())
 }
 
-// String implements the fmt.Stringer interface.
-func (g EthAddress) String() string {
-	return g.string()
-}
+// UnmarshalEthAddress decodes a GraphQL String (0x/0X-prefixed hex) into an Ethereum address.
+func UnmarshalEthAddress(v any) (ethcommon.Address, error) {
+	if v == nil {
+		return ethcommon.Address{}, errors.New("invalid graphql value: nil")
+	}
 
-// MarshalGQL implements the github.com/99designs/gqlgen/graphql.Marshaler interface.
-func (g EthAddress) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(g.string()))
-}
-
-// UnmarshalGQL implements the github.com/99designs/gqlgen/graphql.Unmarshaler interface.
-func (g *EthAddress) UnmarshalGQL(v any) error {
 	s, ok := v.(string)
 	if !ok {
-		return oops.New("v must be string")
+		return ethcommon.Address{}, fmt.Errorf("unsupported graphql value type: %T", v)
+	}
+	if len(s) == 0 {
+		return ethcommon.Address{}, errors.New("invalid graphql string: empty")
 	}
 	if ok := ethcommon.IsHexAddress(s); !ok {
-		return oops.New("v must be valid eth address")
+		return ethcommon.Address{}, errors.New("invalid graphql string: invalid eth address")
 	}
 
-	*g = EthAddress(ethcommon.HexToAddress(s))
-
-	return nil
-}
-
-func (g EthAddress) string() string {
-	return ethcommon.Address(g).Hex()
+	return ethcommon.HexToAddress(s), nil
 }
