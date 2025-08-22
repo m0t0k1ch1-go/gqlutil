@@ -7,7 +7,7 @@ import (
 	ethcommon "github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/require"
 
-	"github.com/m0t0k1ch1-go/gqlutil"
+	"github.com/m0t0k1ch1-go/gqlutil/v2"
 )
 
 func TestMarshalEthAddress(t *testing.T) {
