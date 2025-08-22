@@ -6,7 +6,6 @@ toolchain go1.24.6
 
 require (
 	github.com/ethereum/go-ethereum v1.16.2
-	github.com/m0t0k1ch1-go/timeutil/v5 v5.0.1
 	github.com/samber/oops v1.19.0
 	github.com/stretchr/testify v1.10.0
 )
@@ -27,6 +26,7 @@ require (
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
 	golang.org/x/tools v0.36.0 // indirect
+	golang.org/x/tools/go/expect v0.1.1-deprecated // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/tools v0.6.1 // indirect
 )
