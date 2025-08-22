@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/m0t0k1ch1-go/gqlutil"
+	"github.com/m0t0k1ch1-go/gqlutil/v2"
 )
 
 func TestMarshalInt64(t *testing.T) {
