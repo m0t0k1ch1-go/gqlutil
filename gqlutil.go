@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 )
 
+// EncodeToCursor encodes any value as a Relay-style cursor string.
 func EncodeToCursor[T any](v T) (string, error) {
 	b, err := json.Marshal(v)
 	if err != nil {
@@ -14,6 +15,7 @@ func EncodeToCursor[T any](v T) (string, error) {
 	return base64.RawURLEncoding.EncodeToString(b), nil
 }
 
+// DecodeCursor decodes a cursor string produced by EncodeToCursor.
 func DecodeCursor[T any](cursor string) (v T, err error) {
 	var b []byte
 	{
