@@ -53,9 +53,52 @@ func TestEncodeToCursor(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				s, err := gqlutil.EncodeToCursor(tc.in)
+				cursor, err := gqlutil.EncodeToCursor(tc.in)
 				require.NoError(t, err)
-				require.Equal(t, tc.want, s)
+				require.Equal(t, tc.want, cursor)
+			})
+		}
+	})
+}
+
+func TestMustEncodeToCursor(t *testing.T) {
+	t.Run("panic", func(t *testing.T) {
+		tcs := []struct {
+			name string
+			in   any
+		}{
+			{
+				"func",
+				func() {},
+			},
+		}
+
+		for _, tc := range tcs {
+			t.Run(tc.name, func(t *testing.T) {
+				require.Panics(t, func() {
+					gqlutil.MustEncodeToCursor(tc.in)
+				})
+			})
+		}
+	})
+
+	t.Run("success", func(t *testing.T) {
+		tcs := []struct {
+			name string
+			in   CursorPayload
+			want string
+		}{
+			{
+				"zero value",
+				CursorPayload{},
+				"eyJvZmZzZXQiOjB9",
+			},
+		}
+
+		for _, tc := range tcs {
+			t.Run(tc.name, func(t *testing.T) {
+				cursor := gqlutil.MustEncodeToCursor(tc.in)
+				require.Equal(t, tc.want, cursor)
 			})
 		}
 	})
@@ -110,6 +153,49 @@ func TestDecodeCursor(t *testing.T) {
 			t.Run(tc.name, func(t *testing.T) {
 				cp, err := gqlutil.DecodeCursor[CursorPayload](tc.in)
 				require.NoError(t, err)
+				require.Equal(t, tc.want, cp)
+			})
+		}
+	})
+}
+
+func TestMustDecodeCursor(t *testing.T) {
+	t.Run("panic", func(t *testing.T) {
+		tcs := []struct {
+			name string
+			in   string
+		}{
+			{
+				"invalid base64",
+				"a",
+			},
+		}
+
+		for _, tc := range tcs {
+			t.Run(tc.name, func(t *testing.T) {
+				require.Panics(t, func() {
+					gqlutil.MustDecodeCursor[CursorPayload](tc.in)
+				})
+			})
+		}
+	})
+
+	t.Run("success", func(t *testing.T) {
+		tcs := []struct {
+			name string
+			in   string
+			want CursorPayload
+		}{
+			{
+				"zero value",
+				"eyJvZmZzZXQiOjB9",
+				CursorPayload{},
+			},
+		}
+
+		for _, tc := range tcs {
+			t.Run(tc.name, func(t *testing.T) {
+				cp := gqlutil.MustDecodeCursor[CursorPayload](tc.in)
 				require.Equal(t, tc.want, cp)
 			})
 		}
