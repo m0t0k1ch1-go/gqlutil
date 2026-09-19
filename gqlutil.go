@@ -2,10 +2,12 @@ package gqlutil
 
 import (
 	"encoding/base64"
-	"encoding/json"
+	"encoding/json/v2"
 )
 
-// EncodeToCursor encodes any value as a Relay-style cursor string.
+// EncodeToCursor encodes v as a cursor string for [Relay-style pagination].
+//
+// [Relay-style pagination]: https://relay.dev/graphql/connections.htm
 func EncodeToCursor[T any](v T) (string, error) {
 	b, err := json.Marshal(v)
 	if err != nil {
@@ -15,7 +17,7 @@ func EncodeToCursor[T any](v T) (string, error) {
 	return base64.RawURLEncoding.EncodeToString(b), nil
 }
 
-// MustEncodeToCursor panics if the input is invalid.
+// MustEncodeToCursor is like [EncodeToCursor] but panics if the input is invalid.
 func MustEncodeToCursor[T any](v T) string {
 	cursor, err := EncodeToCursor(v)
 	if err != nil {
@@ -25,21 +27,23 @@ func MustEncodeToCursor[T any](v T) string {
 	return cursor
 }
 
-// DecodeCursor decodes a cursor string produced by EncodeToCursor.
-func DecodeCursor[T any](cursor string) (v T, err error) {
-	var b []byte
-	{
-		if b, err = base64.RawURLEncoding.DecodeString(cursor); err != nil {
-			return
-		}
+// DecodeCursor decodes a cursor string produced by [EncodeToCursor].
+func DecodeCursor[T any](cursor string) (T, error) {
+	var v T
+
+	b, err := base64.RawURLEncoding.DecodeString(cursor)
+	if err != nil {
+		return v, err
 	}
 
-	err = json.Unmarshal(b, &v)
+	if err := json.Unmarshal(b, &v); err != nil {
+		return v, err
+	}
 
-	return
+	return v, nil
 }
 
-// MustDecodeCursor panics if the input is invalid.
+// MustDecodeCursor is like [DecodeCursor] but panics if the input is invalid.
 func MustDecodeCursor[T any](cursor string) T {
 	v, err := DecodeCursor[T](cursor)
 	if err != nil {
