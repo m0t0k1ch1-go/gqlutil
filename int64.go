@@ -14,6 +14,7 @@ func MarshalInt64(i int64) graphql.Marshaler {
 }
 
 // UnmarshalInt64 decodes a decimal string into an int64.
+// The string may be signed; leading zeros are allowed and ignored.
 func UnmarshalInt64(v any) (int64, error) {
 	if v == nil {
 		return 0, errors.New("unsupported value: nil")

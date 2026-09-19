@@ -71,6 +71,21 @@ func TestUnmarshalInt64(t *testing.T) {
 				"invalid",
 				"invalid decimal string",
 			},
+			{
+				"string: fractional",
+				"0.0",
+				"invalid decimal string",
+			},
+			{
+				"string: exponential",
+				"0e0",
+				"invalid decimal string",
+			},
+			{
+				"string: contains underscores",
+				"0_0",
+				"invalid decimal string",
+			},
 		}
 
 		for _, tc := range tcs {
@@ -93,13 +108,38 @@ func TestUnmarshalInt64(t *testing.T) {
 				math.MinInt64,
 			},
 			{
+				"min with leading zeros",
+				"-009223372036854775808",
+				math.MinInt64,
+			},
+			{
 				"zero",
 				"0",
 				0,
 			},
 			{
+				"zero with leading zeros",
+				"000",
+				0,
+			},
+			{
 				"max",
 				"9223372036854775807",
+				math.MaxInt64,
+			},
+			{
+				"max with leading zeros",
+				"009223372036854775807",
+				math.MaxInt64,
+			},
+			{
+				"signed max",
+				"+9223372036854775807",
+				math.MaxInt64,
+			},
+			{
+				"signed max with leading zeros",
+				"+009223372036854775807",
 				math.MaxInt64,
 			},
 		}
