@@ -3,8 +3,9 @@ package gqlutil_test
 import (
 	"testing"
 
-	"github.com/m0t0k1ch1-go/gqlutil/v2"
 	"github.com/stretchr/testify/require"
+
+	"github.com/m0t0k1ch1-go/gqlutil/v2"
 )
 
 type CursorPayload struct {
@@ -16,19 +17,17 @@ func TestEncodeToCursor(t *testing.T) {
 		tcs := []struct {
 			name string
 			in   any
-			want string
 		}{
 			{
 				"func",
 				func() {},
-				"",
 			},
 		}
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
 				_, err := gqlutil.EncodeToCursor(tc.in)
-				require.ErrorContains(t, err, tc.want)
+				require.Error(t, err)
 			})
 		}
 	})
@@ -45,7 +44,7 @@ func TestEncodeToCursor(t *testing.T) {
 				"eyJvZmZzZXQiOjB9",
 			},
 			{
-				"offset: 1",
+				"non-zero value",
 				CursorPayload{Offset: 1},
 				"eyJvZmZzZXQiOjF9",
 			},
@@ -109,24 +108,21 @@ func TestDecodeCursor(t *testing.T) {
 		tcs := []struct {
 			name string
 			in   string
-			want string
 		}{
 			{
 				"invalid base64",
 				"a",
-				"",
 			},
 			{
 				"invalid json",
 				"eyJvZmZzZXQiOiIifQ",
-				"",
 			},
 		}
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
 				_, err := gqlutil.DecodeCursor[CursorPayload](tc.in)
-				require.ErrorContains(t, err, tc.want)
+				require.Error(t, err)
 			})
 		}
 	})
@@ -143,7 +139,7 @@ func TestDecodeCursor(t *testing.T) {
 				CursorPayload{},
 			},
 			{
-				"offset: 1",
+				"non-zero value",
 				"eyJvZmZzZXQiOjF9",
 				CursorPayload{Offset: 1},
 			},
@@ -151,9 +147,9 @@ func TestDecodeCursor(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				cp, err := gqlutil.DecodeCursor[CursorPayload](tc.in)
+				cursorPayload, err := gqlutil.DecodeCursor[CursorPayload](tc.in)
 				require.NoError(t, err)
-				require.Equal(t, tc.want, cp)
+				require.Equal(t, tc.want, cursorPayload)
 			})
 		}
 	})
@@ -195,8 +191,8 @@ func TestMustDecodeCursor(t *testing.T) {
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
-				cp := gqlutil.MustDecodeCursor[CursorPayload](tc.in)
-				require.Equal(t, tc.want, cp)
+				cursorPayload := gqlutil.MustDecodeCursor[CursorPayload](tc.in)
+				require.Equal(t, tc.want, cursorPayload)
 			})
 		}
 	})
