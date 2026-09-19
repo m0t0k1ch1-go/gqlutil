@@ -44,22 +44,22 @@ func TestUnmarshalEthAddress(t *testing.T) {
 			{
 				"nil",
 				nil,
-				"invalid graphql value: nil",
+				"unsupported value: nil",
 			},
 			{
 				"int",
 				int(0),
-				"unsupported graphql value type: int",
+				"unsupported value type: int",
 			},
 			{
 				"string: empty",
 				"",
-				"invalid graphql string: empty",
+				"invalid eth address string: empty",
 			},
 			{
 				"string: invalid",
 				"invalid",
-				"invalid graphql string: invalid eth address",
+				"invalid eth address string",
 			},
 		}
 
