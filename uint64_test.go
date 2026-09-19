@@ -54,22 +54,47 @@ func TestUnmarshalUint64(t *testing.T) {
 			{
 				"nil",
 				nil,
-				"invalid graphql value: nil",
+				"unsupported value: nil",
 			},
 			{
 				"int",
 				int(0),
-				"unsupported graphql value type: int",
+				"unsupported value type: int",
 			},
 			{
 				"string: empty",
 				"",
-				"invalid graphql string: empty",
+				"invalid decimal string: empty",
 			},
 			{
 				"string: invalid",
 				"invalid",
-				"invalid graphql string",
+				"invalid decimal string",
+			},
+			{
+				"decimal string: fractional",
+				"0.0",
+				"invalid decimal string",
+			},
+			{
+				"decimal string: exponential",
+				"0e0",
+				"invalid decimal string",
+			},
+			{
+				"decimal string: signed negative",
+				"-1",
+				"invalid decimal string",
+			},
+			{
+				"decimal string: signed positive",
+				"+1",
+				"invalid decimal string",
+			},
+			{
+				"decimal string: contains underscores",
+				"0_0",
+				"invalid decimal string",
 			},
 		}
 
@@ -93,13 +118,28 @@ func TestUnmarshalUint64(t *testing.T) {
 				0,
 			},
 			{
+				"zero with leading zeros",
+				"000",
+				0,
+			},
+			{
 				"one",
 				"1",
 				1,
 			},
 			{
+				"one with leading zeros",
+				"001",
+				1,
+			},
+			{
 				"max",
 				"18446744073709551615",
+				math.MaxUint64,
+			},
+			{
+				"max with leading zeros",
+				"0018446744073709551615",
 				math.MaxUint64,
 			},
 		}
