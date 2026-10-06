@@ -44,22 +44,22 @@ func TestUnmarshalEthAddress(t *testing.T) {
 			{
 				"nil",
 				nil,
-				"unsupported value: nil",
+				"unsupported input: nil",
 			},
 			{
 				"int",
 				int(0),
-				"unsupported value type: int",
+				"unsupported input type: int",
 			},
 			{
 				"string: empty",
 				"",
-				"invalid eth address string: empty",
+				"invalid string input: empty",
 			},
 			{
 				"string: invalid",
 				"invalid",
-				"invalid eth address string",
+				"invalid string input: must be an eth address",
 			},
 		}
 
