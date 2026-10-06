@@ -54,47 +54,47 @@ func TestUnmarshalUint64(t *testing.T) {
 			{
 				"nil",
 				nil,
-				"unsupported value: nil",
+				"unsupported input: nil",
 			},
 			{
 				"int",
 				int(0),
-				"unsupported value type: int",
+				"unsupported input type: int",
 			},
 			{
 				"string: empty",
 				"",
-				"invalid decimal string: empty",
+				"invalid string input: empty",
 			},
 			{
 				"string: invalid",
 				"invalid",
-				"invalid decimal string",
+				"invalid string input",
 			},
 			{
 				"decimal string: fractional",
 				"0.0",
-				"invalid decimal string",
+				"invalid string input",
 			},
 			{
 				"decimal string: exponential",
 				"0e0",
-				"invalid decimal string",
+				"invalid string input",
 			},
 			{
 				"decimal string: signed negative",
 				"-1",
-				"invalid decimal string",
+				"invalid string input",
 			},
 			{
 				"decimal string: signed positive",
 				"+1",
-				"invalid decimal string",
+				"invalid string input",
 			},
 			{
 				"decimal string: contains underscores",
 				"0_0",
-				"invalid decimal string",
+				"invalid string input",
 			},
 		}
 

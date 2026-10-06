@@ -17,20 +17,20 @@ func MarshalInt64(i int64) graphql.Marshaler {
 // The string may be signed; leading zeros are allowed and ignored.
 func UnmarshalInt64(v any) (int64, error) {
 	if v == nil {
-		return 0, errors.New("unsupported value: nil")
+		return 0, errors.New("unsupported input: nil")
 	}
 
 	s, ok := v.(string)
 	if !ok {
-		return 0, fmt.Errorf("unsupported value type: %T", v)
+		return 0, fmt.Errorf("unsupported input type: %T", v)
 	}
 	if len(s) == 0 {
-		return 0, errors.New("invalid decimal string: empty")
+		return 0, errors.New("invalid string input: empty")
 	}
 
 	i, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
-		return 0, fmt.Errorf("invalid decimal string: %w", err)
+		return 0, fmt.Errorf("invalid string input: %w", err)
 	}
 
 	return i, nil
