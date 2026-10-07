@@ -8,7 +8,7 @@ import (
 	ethcommon "github.com/ethereum/go-ethereum/common"
 )
 
-// MarshalEthAddress returns a [graphql.Marshaler] that encodes address as a quoted EIP-55 compliant hexadecimal string.
+// MarshalEthAddress returns a [graphql.Marshaler] that encodes address as the quoted string returned by [ethcommon.Address.Hex].
 func MarshalEthAddress(address ethcommon.Address) graphql.Marshaler {
 	return graphql.MarshalString(address.Hex())
 }
