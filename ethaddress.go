@@ -8,9 +8,9 @@ import (
 	ethcommon "github.com/ethereum/go-ethereum/common"
 )
 
-// MarshalEthAddress returns a [graphql.Marshaler] that encodes address as the quoted string returned by [ethcommon.Address.Hex].
-func MarshalEthAddress(address ethcommon.Address) graphql.Marshaler {
-	return graphql.MarshalString(address.Hex())
+// MarshalEthAddress returns a [graphql.Marshaler] that encodes a as the quoted string returned by [ethcommon.Address.Hex].
+func MarshalEthAddress(a ethcommon.Address) graphql.Marshaler {
+	return graphql.MarshalString(a.Hex())
 }
 
 // UnmarshalEthAddress decodes a hexadecimal string representing an Ethereum address into an [ethcommon.Address].
