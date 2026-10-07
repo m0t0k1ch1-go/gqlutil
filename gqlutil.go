@@ -3,6 +3,7 @@ package gqlutil
 import (
 	"encoding/base64"
 	"encoding/json/v2"
+	"fmt"
 )
 
 // EncodeToCursor encodes v as a cursor string for [Relay-style pagination].
@@ -11,7 +12,7 @@ import (
 func EncodeToCursor[T any](v T) (string, error) {
 	b, err := json.Marshal(v)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to marshal: %w", err)
 	}
 
 	return base64.RawURLEncoding.EncodeToString(b), nil
@@ -33,11 +34,11 @@ func DecodeCursor[T any](cursor string) (T, error) {
 
 	b, err := base64.RawURLEncoding.DecodeString(cursor)
 	if err != nil {
-		return v, err
+		return v, fmt.Errorf("invalid cursor: %w", err)
 	}
 
 	if err := json.Unmarshal(b, &v); err != nil {
-		return v, err
+		return v, fmt.Errorf("invalid cursor: %w", err)
 	}
 
 	return v, nil

@@ -17,17 +17,19 @@ func TestEncodeToCursor(t *testing.T) {
 		tcs := []struct {
 			name string
 			in   any
+			want string
 		}{
 			{
 				"func",
 				func() {},
+				"failed to marshal",
 			},
 		}
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
 				_, err := gqlutil.EncodeToCursor(tc.in)
-				require.Error(t, err)
+				require.ErrorContains(t, err, tc.want)
 			})
 		}
 	})
@@ -108,21 +110,24 @@ func TestDecodeCursor(t *testing.T) {
 		tcs := []struct {
 			name string
 			in   string
+			want string
 		}{
 			{
 				"invalid base64",
 				"a",
+				"invalid cursor",
 			},
 			{
 				"invalid json",
 				"eyJvZmZzZXQiOiIifQ",
+				"invalid cursor",
 			},
 		}
 
 		for _, tc := range tcs {
 			t.Run(tc.name, func(t *testing.T) {
 				_, err := gqlutil.DecodeCursor[CursorPayload](tc.in)
-				require.Error(t, err)
+				require.ErrorContains(t, err, tc.want)
 			})
 		}
 	})
