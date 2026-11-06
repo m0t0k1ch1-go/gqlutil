@@ -25,7 +25,7 @@ func UnmarshalEthAddress(v any) (ethcommon.Address, error) {
 		return ethcommon.Address{}, fmt.Errorf("unsupported input type: %T", v)
 	}
 	if len(s) == 0 {
-		return ethcommon.Address{}, errors.New("invalid string input: empty")
+		return ethcommon.Address{}, errors.New("invalid string input: must not be empty")
 	}
 	if ok := ethcommon.IsHexAddress(s); !ok {
 		return ethcommon.Address{}, errors.New("invalid string input: must be an eth address")

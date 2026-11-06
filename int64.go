@@ -25,7 +25,7 @@ func UnmarshalInt64(v any) (int64, error) {
 		return 0, fmt.Errorf("unsupported input type: %T", v)
 	}
 	if len(s) == 0 {
-		return 0, errors.New("invalid string input: empty")
+		return 0, errors.New("invalid string input: must not be empty")
 	}
 
 	i, err := strconv.ParseInt(s, 10, 64)
