@@ -64,7 +64,7 @@ func TestUnmarshalUint64(t *testing.T) {
 			{
 				"string: empty",
 				"",
-				"invalid string input: empty",
+				"invalid string input: must not be empty",
 			},
 			{
 				"string: invalid",
