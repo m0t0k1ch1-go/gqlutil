@@ -2,7 +2,7 @@ module github.com/m0t0k1ch1-go/gqlutil/v2
 
 go 1.27
 
-toolchain go1.27.2
+toolchain go1.27.3
 
 require (
 	github.com/99designs/gqlgen v0.17.95
